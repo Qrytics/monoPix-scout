@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MonoPix Options</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 16px; }
+      label { display:block; margin: 8px 0; }
+    </style>
+  </head>
+  <body>
+    <h2>MonoPix Scout — Options</h2>
+    <label>Default mode:
+      <select id="defaultMode">
+        <option value="observe">Observe</option>
+        <option value="likely">Likely</option>
+        <option value="strict">Strict</option>
+      </select>
+    </label>
+    <p>What’s a “tracking pixel”? It's often a 1×1 image or request used to track opens/views/visits. The MonoPix extension flags these and explains why.</p>
+    <script src="options.js"></script>
+  </body>
+</html>
