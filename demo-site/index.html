@@ -1,22 +1,21 @@
-// This demo-site is meant to simulate 3 different tracking methods:
-// Image_pixel, Beacon, Network_call
+This demo-site is meant to simulate 3 different tracking methods: Image_pixel, Beacon, Network_call
 <!doctype html>
 <html>
   <body>
     <h1>Demo page</h1>
-    <p>Visible image:</p>
+    <h2>Visible image:</h2>
     <img src="./cameraPic.png" width="512" height="512" />
-    <p>1×1 pixel:</p>
+    <h2>1×1 pixel:</h2>
     
-    // Here's the 1 by 1 pixel image
+    ^^ The 1 by 1 pixel image is here.
     <img src="./pixel-1x1.png" width="1" height="1" />
     
     <script>
       window.addEventListener("load", () => {
-        // Beacon-like call
+        <!-- Beacon-like call -->
         if (navigator.sendBeacon) navigator.sendBeacon("https://example.com/beacon?demo=1");
         
-        // HTTP GET Network call
+        <!-- HTTP GET Network call -->
         fetch("https://example.com/pixel?f=1");
       });
     </script>
