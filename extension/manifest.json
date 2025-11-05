@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "MonoPix Scout",
+  "version": "0.1.0",
+  "description": "Detects, explains, and (optionally) blocks tracking pixels & beacons.",
+  "permissions": ["declarativeNetRequest", "declarativeNetRequestFeedback", "storage", "tabs", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "MonoPix Scout", "default_popup": "popup.html" },
+  "options_page": "options.html",
+  "icons": {
+    "16": "public/icons/16.png",
+    "48": "public/icons/48.png",
+    "128": "public/icons/128.png"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      { "id": "rules-0", "enabled": true, "path": "public/rules/compiled_rules.json" }
+    ]
+  },
+  "devtools_page": "devtools.html"
+}
