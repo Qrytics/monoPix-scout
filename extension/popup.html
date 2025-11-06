@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MonoPix Scout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 0; padding: 12px; width: 380px; }
+      h1 { font-size: 16px; margin: 0 0 8px; }
+      .row { border: 1px solid #ddd; border-radius: 8px; padding: 8px; margin: 6px 0; }
+      .top { display:flex; justify-content:space-between; gap:8px; }
+      .url { max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .badge { font-size: 11px; padding: 2px 6px; border-radius: 999px; background:#eee; }
+      .high { background: #ffd6d6; }
+      .medium { background: #fff1c2; }
+      .low { background: #eaeaea; }
+      .meta { font-size: 11px; color: #555; margin-top: 4px; }
+      .controls { margin-top: 8px; display:flex; gap:6px; align-items:center; }
+      select { font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <h1>MonoPix Scout</h1>
+    <div class="controls">
+      <label for="mode">This site mode:</label>
+      <select id="mode">
+        <option value="observe">Observe</option>
+        <option value="likely">Likely</option>
+        <option value="strict">Strict</option>
+      </select>
+      <button id="refresh">Refresh</button>
+    </div>
+    <div id="list"></div>
+    <script src="popup.js"></script>
+  </body>
+</html>
