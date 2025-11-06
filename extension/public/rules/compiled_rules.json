@@ -1,1 +1,6 @@
-**Nothing Yet, will fill in later with list of rules to identify pixels/beacons
+[
+  { "id": 10001, "priority": 1, "action": { "type": "block" },
+    "condition": { "urlFilter": "*pixel*", "resourceTypes": ["image","xmlhttprequest","sub_frame"] } },
+  { "id": 10002, "priority": 1, "action": { "type": "block" },
+    "condition": { "urlFilter": "*beacon*", "resourceTypes": ["xmlhttprequest","script"] } }
+]
