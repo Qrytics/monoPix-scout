@@ -2,6 +2,19 @@
 const perTab = new Map();
 const tabPorts = new Map();
 
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  const url = changeInfo.url || tab?.url;
+  if (!url) return;
+  const host = safeHost(url);
+  if (host) tabOrigins.set(tabId, host);
+});
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+  tabOrigins.delete(tabId);
+  perTab.delete(tabId);
+  tabPorts.delete(tabId);
+});
+
 // Collect set of tabs
 function getPorts(tabId) {
   if (!tabPorts.has(tabId)) tabPorts.set(tabId, new Set());
@@ -101,31 +114,38 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     pushEvent(sender.tab.id, ev);
 
     // soft-block based on per-site mode
-    getSiteMode(safeHost(msg.signal.url)).then((mode) => {
+    const pageHost = 
+      tabOrigins.get(sender.tab.id) ||
+      safeHost(sender.tab.url) ||
+      safeHost(msg.signal.url);
+    getSiteMode(pageHost).then((mode) => {
       const r = ev.risk;
       const shouldSoft = (mode === "strict" && r !== "low") || (mode === "likely" && r === "high");
       if (shouldSoft && msg.signal.canSoftBlock) {
         chrome.tabs.sendMessage(sender.tab.id, { type: "SOFT_BLOCK", url: ev.url });
       }
     });
-
     sendResponse?.({ ok: true });
     return;
   }
 });
 
-// FIX
 if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
   chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((ev) => {
     if (ev?.tabId >= 0) {
+      const thirdParty = isThirdParty(
+        ev.request.url,
+        ev.tabId,
+        ev.request.initiator
+      );
       pushEvent(ev.tabId, {
         tabId: ev.tabId,
         url: ev.request.url,
         type: ev.request.resourceType || "request",
         size: null,
         reason: "blocked by rule:" + ev.rule.ruleId,
-        risk: "high",
-        thirdParty: //FIX,
+        risk: score({ url: ev.request.url, thirdParty }),
+        thirdParty,
         time: Date.now()
       });
     }
@@ -141,9 +161,30 @@ function score(sig) {
   if (/(pixel|track|open|view|beacon|analytics)/i.test(sig.url)) s += 1;
   return s >= 4 ? "high" : (s >= 2 ? "medium" : "low");
 }
-function isThirdParty(url) {
-  try { return new URL(url).hostname !== location.hostname; } catch { return false; }
+
+function isThirdParty(requestUrl, tabId, initiator) {
+  try {
+    const requestHost = new URL(requestUrl).hostname;
+    let originHost = null;
+    if (initiator) {
+      try {
+        const originUrl = new URL(initiator);
+        if (originUrl.protocol !== "chrome-extension:") {
+          originHost = originUrl.hostname;
+        }
+      } catch {
+        // ignore invalid
+      }
+    }
+    if (!originHost && tabId != null) {
+      originHost = tabOrigins.get(tabId) || null;
+    }
+    return originHost != null && originHost !== requestHost;
+  } catch {
+    return false;
+  }
 }
+
 function safeHost(url) {
   try { return new URL(url).hostname; } catch { return ""; }
 }
