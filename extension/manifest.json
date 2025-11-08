@@ -9,9 +9,9 @@
   "action": { "default_title": "MonoPix Scout", "default_popup": "popup.html" },
   "options_page": "options.html",
   "icons": {
-    "16": "public/icons/16.png",
-    "48": "public/icons/48.png",
-    "128": "public/icons/128.png"
+    "16": "public/icons/monoPix-scout_icon_16px.png",
+    "48": "public/icons/monoPix-scout_icon_48px.png",
+    "128": "public/icons/monoPix-scout_icon_128px.png"
   },
   "declarative_net_request": {
     "rule_resources": [
