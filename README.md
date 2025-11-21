@@ -3,19 +3,17 @@
 An image/vision-analysis tool for detecting and visualising pixel-level changes across video frames using a “MonoPix”-inspired model. Discovers and reveals hidden imagery and tracking assets loaded on the webpages you visit. See what sites are pulling in the background — even when content is invisible or masked by CSS. Developed by Qrytics & TechnicalDree. This repository contains the full implementation, a seeded test page with sample data, evaluation scripts, and supporting modules.
 
 ## Getting Started
-### 1. Clone
-    git clone https://github.com/Qrytics/monoPix-scout.git  
+1. Clone: `git clone https://github.com/Qrytics/monoPix-scout.git`
 
-### 2. Visit
-    chrome://extensions/
+2. Visit: `chrome://extensions/`
 
-### 3. Enable Developer mode (top-right switch)
+3. Enable Developer mode (top-right switch)
 
-### 4. Click Load unpacked
+4. Click Load unpacked
 
-### 5. Select the downloaded project folder
+5. Select the downloaded project folder
 
-### 6. The extension icon (three vertical RGB bars) will appear in your Chrome bar.
+6. The extension icon (three vertical RGB bars) will appear in your Chrome bar.
 
 ## How to Use
 
