@@ -1,12 +1,18 @@
 const listEl = document.getElementById("list");
 const modeSelect = document.getElementById("mode");
 const refreshBtn = document.getElementById("refresh");
+const statusEl = document.getElementById("status");
 
 const port = chrome.runtime.connect({ name: "monopix" });
 
 let currentTabId = null;
 let currentHost = null;
 let events = [];
+
+function showStatus(text) {
+  statusEl.textContent = text;
+  setTimeout(() => { statusEl.textContent = ""; }, 1500);
+}
 
 function formatTime(ts) {
   try {
@@ -99,11 +105,13 @@ function loadMode(host) {
 
 modeSelect.addEventListener("change", (ev) => {
   if (!currentHost) return;
+  const mode = ev.target.value;
   port.postMessage({
     type: "SET_SITE_MODE",
     host: currentHost,
-    mode: ev.target.value
+    mode
   });
+  showStatus(`Saved: ${mode} mode - reload page to apply`);
 });
 
 refreshBtn.addEventListener("click", () => requestSnapshot());
