@@ -13,6 +13,12 @@
     "48": "public/icons/monoPix-scout_icon_48px.png",
     "128": "public/icons/monoPix-scout_icon_128px.png"
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["page_hooks.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "declarative_net_request": {
     "rule_resources": [
       { "id": "rules-0", "enabled": true, "path": "public/rules/compiled_rules.json" }
