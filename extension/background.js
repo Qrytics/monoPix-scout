@@ -3,11 +3,17 @@ const perTab = new Map();
 const tabPorts = new Map();
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  // when a new reload starts, reset our memory for this tab
+  if (changeInfo.status === "loading" || changeInfo.url) {
+    perTab.delete(tabId);
+  }
+
   const url = changeInfo.url || tab?.url;
   if (!url) return;
   const host = safeHost(url);
   if (host) tabOrigins.set(tabId, host);
 });
+
 
 chrome.tabs.onRemoved.addListener((tabId) => {
   tabOrigins.delete(tabId);
