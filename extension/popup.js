@@ -85,11 +85,13 @@ function requestSnapshot() {
 }
 
 function loadMode(host) {
-  modeSelect.disabled = !host;
-  if (!host) {
+  if (host == null) {
+    modeSelect.disabled = true;
     modeSelect.value = "observe";
     return;
   }
+  modeSelect.disabled = false;
+
   chrome.storage.local.get(["siteModes", "defaultMode"], (data) => {
     if (chrome.runtime.lastError) {
       console.warn("storage error", chrome.runtime.lastError);
