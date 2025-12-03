@@ -114,7 +114,17 @@ modeSelect.addEventListener("change", (ev) => {
   showStatus(`Saved: ${mode} mode - reload page to apply`);
 });
 
-refreshBtn.addEventListener("click", () => requestSnapshot());
+refreshBtn.addEventListener("click", () => {
+  if (currentTabId != null) {
+    // ask the page to rescan
+    chrome.tabs.sendMessage(currentTabId, { type: "RESCAN" }, () => {
+      // then ask the background for the new event list
+      requestSnapshot();
+    });
+  } else {
+    requestSnapshot();
+  }
+});
 
 port.onMessage.addListener((msg) => {
   if (msg?.type === "SNAPSHOT") {
