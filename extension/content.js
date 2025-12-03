@@ -32,10 +32,27 @@ window.fetch = function(input, init){ try{ report("xhr", String(input), "fetch")
 scanImages();
 new MutationObserver(() => scanImages()).observe(document.documentElement, { subtree: true, childList: true, attributes: true });
 
-chrome.runtime.onMessage.addListener((msg) => {
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg?.type === "RESCAN") {
+    try {
+      scanImages();
+      sendResponse?.({ ok: true });
+    } catch (e) {
+      console.error("RESCAN failed", e);
+      sendResponse?.({ ok: false, error: String(e) });
+    }
+    return;
+  }
+
   if (msg?.type === "SOFT_BLOCK" && msg.url) {
     document.querySelectorAll(`img[src="${msg.url}"]`).forEach((img) => {
-      try { const c=document.createElement("canvas"); c.width=img.width||1; c.height=img.height||1; img.src=c.toDataURL("image/png"); } catch {}
+      try {
+        const c = document.createElement("canvas");
+        c.width = img.width || 1;
+        c.height = img.height || 1;
+        img.src = c.toDataURL("image/png");
+      } catch {}
     });
   }
 });
+
