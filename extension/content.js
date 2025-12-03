@@ -16,6 +16,23 @@ function report(kind, url, reason, size, canSoftBlock) {
     signal: { kind, url, reason, size, thirdParty: is3p(url), canSoftBlock }
   });
 }
+
+window.addEventListener("message", (ev) => {
+  const data = ev.data;
+  if (!data || data.source !== "monopix") return;
+  
+  chrome.runtime.sendMessage({
+    type: "PIXEL_CANDIDATE",
+    signal: {
+      kind: data.kind,
+      url: data.url,
+      reason: data.reason,
+      size: null,
+      canSoftBlock: false
+    }
+  });
+});
+
 function scanImages() {
   document.querySelectorAll("img").forEach((img) => {
     const size = { w: img.naturalWidth || img.width || 0, h: img.naturalHeight || img.height || 0 };
@@ -24,10 +41,6 @@ function scanImages() {
     }
   });
 }
-const _beacon = navigator.sendBeacon.bind(navigator);
-navigator.sendBeacon = function(url, data){ report("beacon", url, "navigator.sendBeacon"); return _beacon(url, data); };
-const _fetch = window.fetch.bind(window);
-window.fetch = function(input, init){ try{ report("xhr", String(input), "fetch"); }catch{} return _fetch(input, init); };
 
 scanImages();
 new MutationObserver(() => scanImages()).observe(document.documentElement, { subtree: true, childList: true, attributes: true });
@@ -56,3 +69,39 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 });
 
+(function injectHooksIntoPage() {
+  const code = `
+    (function() {
+      const _beacon = navigator.sendBeacon && navigator.sendBeacon.bind(navigator);
+      if (_beacon) {
+        navigator.sendBeacon = function(url, data) {
+          try {
+            window.postMessage(
+              { source: "monopix", kind: "beacon", url: String(url), reason: "navigator.sendBeacon" },
+              "*"
+            );
+          } catch (e) {}
+          return _beacon(url, data);
+        };
+      }
+
+      const _fetch = window.fetch && window.fetch.bind(window);
+      if (_fetch) {
+        window.fetch = function(input, init) {
+          try {
+            window.postMessage(
+              { source: "monopix", kind: "xhr", url: String(input), reason: "fetch" },
+              "*"
+            );
+          } catch (e) {}
+          return _fetch(input, init);
+        };
+      }
+    })();
+  `;
+
+  const s = document.createElement("script");
+  s.textContent = code;
+  (document.head || document.documentElement).appendChild(s);
+  s.remove();
+})();
